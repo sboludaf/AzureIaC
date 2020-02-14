@@ -20,15 +20,15 @@
 
 
 ## Requisitos para los despliegues
-> **[Visual Studio Code:](https://code.visualstudio.com/)** Se trata de un editor de texto de código fuente desarrollado por Microsoft para Windows, Linux y macOS. Que a su vez se han instalado una serie de extensiones para facilitar el desarrollo de las plantillas ARM.
-> 
->> - [Azure Tools:](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack) Instala todas las herramientas necesarias para conectar VS Code con la plataforma de Azure, además, incluye una herramienta que nos ayudará a auto-completar las plantillas ARM.
->>
->> - [Azure ARM Template Helper](https://marketplace.visualstudio.com/items?itemName=ed-elliott.azure-arm-template-helper) Ayuda a identificar los recursos desplegados en la plantilla ARM que serán mostrados de forma gráfica.
->
-> **[Azure CLI](https://docs.microsoft.com/es-es/cli/azure/?view=azure-cli-latest)** Se trata de la interfaz de la linea de comandos (CLI) de Azure 
->
-> **[Suscripción de Azure:](https://portal.azure.com/)** Donde se desplegarán los recursos.
+ **[Visual Studio Code:](https://code.visualstudio.com/)** Se trata de un editor de texto de código fuente desarrollado por Microsoft para Windows, Linux y macOS. Que a su vez se han instalado una serie de extensiones para facilitar el desarrollo de las plantillas ARM.
+ 
+ - [Azure Tools:](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack) Instala todas las herramientas necesarias para conectar VS Code con la plataforma de Azure, además, incluye una herramienta que nos ayudará a auto-completar las plantillas ARM.
+
+ - [Azure ARM Template Helper](https://marketplace.visualstudio.com/items?itemName=ed-elliott.azure-arm-template-helper) Ayuda a identificar los recursos desplegados en la plantilla ARM que serán mostrados de forma gráfica.
+
+ **[Azure CLI](https://docs.microsoft.com/es-es/cli/azure/?view=azure-cli-latest)** Se trata de la interfaz de la linea de comandos (CLI) de Azure 
+
+ **[Suscripción de Azure:](https://portal.azure.com/)** Donde se desplegarán los recursos.
 
 
 
