@@ -1,0 +1,110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "StorageAccountType": {
+            "type": "string",
+            "allowedValues": [    
+                "Standard_LRS", 
+                "Standard_GRS", 
+                "Standard_RAGRS", 
+                "Standard_ZRS",
+                "Premium_LRS",
+                "Premium_ZRS",
+                "Standard_GZRS", 
+                "Standard_RAGZRS"
+            ],
+            "metadata": {
+                "description": "Type of storage account"
+            }
+        },
+        "BlobStorage1": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of first BlobStorage"
+            }
+        },
+        "FileShare1": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of first FileShare"
+            }
+        }
+    },
+    "variables": {
+        // Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only
+        "StorageAccountName": "[toLower(concat(parameters('ProjectName'), parameters('EnvironmentName'), 'sa'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('StorageAccountName')]",
+            // https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/2019-04-01/storageaccounts
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "kind": "StorageV2",
+            "sku": {
+                "name": "[parameters('StorageAccountType')]"
+            },
+            "resources": [
+                {
+                    // Configuration of all Blob Services
+                    "type": "blobServices",
+                    "apiVersion": "2019-04-01",
+                    "name": "default",
+                    // Need parent resource dependency
+                    "dependsOn": [
+                        "[variables('StorageAccountName')]"
+                    ],
+                    "properties": {
+                        // Add Cors Rules if necessary
+                       "cors": {
+                           "corsRules": []
+                       },
+                       // Set to true for automatic Snapshot Policy
+                       "automaticSnapshotPolicyEnabled": false,
+                       // Enable soft delete
+                       "deleteRetentionPolicy": {
+                           "enabled": true,
+                           "days": 7 //Number of retention days
+                       }
+                    },
+                    "resources": [
+                        {
+                                // Create Blob Container
+                                "type": "containers",
+                                "apiVersion": "2019-04-01",
+                                "name": "[parameters('BlobStorage1')]",
+                                // Need parent resource dependency
+                                "dependsOn": [
+                                    "[concat(variables('StorageAccountName'), '/default')]"
+                                ],
+                                "properties": {
+                                    // Set te public access
+                                    "publicAccess": "Container"
+                                }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
