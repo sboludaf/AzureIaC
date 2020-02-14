@@ -60,6 +60,6 @@ Al igual que todo flujo de CI/CD se establecerá una construciccón del artefact
 # Licencia y Contacto
 Todo el código desarrollado en el repositorio es de libre acceso y uso, para más información puede contactar a través de los siguientes métodos.
 
-GMAIL
+-GMAIL
 
 LINKEDIN
