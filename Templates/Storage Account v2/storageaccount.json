@@ -116,12 +116,12 @@
                     "resources": [
                         {
                             // Create Blob Container
-                            "type": "blobServices/containers",
+                            "type": "containers",
                             "apiVersion": "2019-04-01",
-                            "name": "[concat('default/',parameters('BlobStorage1'))]",
+                            "name": "[parameters('BlobStorage1')]",
                             // Need parent resource dependency
                             "dependsOn": [
-                                "[concat(variables('StorageAccountName'), '/default')]"
+                                "[variables('StorageAccountName')]"
                             ],
                             "properties": {
                                 // Set te public access
