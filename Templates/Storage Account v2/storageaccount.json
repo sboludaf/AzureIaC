@@ -70,6 +70,26 @@
             "sku": {
                 "name": "[parameters('StorageAccountType')]"
             },
+            "properties": {
+                "accessTier": "Hot", // or Cool
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Allow", // or Deny
+                    "virtualNetworkRules": [],
+                    "ipRules": []
+                },
+                "encryption":{
+                    "keySource": "Microsoft.Storage", // Can be provided for Key Vault for personal key
+                    "services": {
+                        "blob": {
+                            "enabled": true // false for disable encryption
+                        },
+                        "file": {
+                            "enabled": true // false for disable encryption
+                        }
+                    }
+                } 
+            },
             "resources": [
                 {
                     // Configuration of all Blob Services
@@ -96,7 +116,7 @@
                     "resources": [
                         {
                             // Create Blob Container
-                            "type": "containers",
+                            "type": "blobServices/containers",
                             "apiVersion": "2019-04-01",
                             "name": "[concat('default/',parameters('BlobStorage1'))]",
                             // Need parent resource dependency
