@@ -98,7 +98,7 @@
                             // Create Blob Container
                             "type": "containers",
                             "apiVersion": "2019-04-01",
-                            "name": "[parameters('BlobStorage1')]",
+                            "name": "[concat('default/',parameters('BlobStorage1'))]",
                             // Need parent resource dependency
                             "dependsOn": [
                                 "[concat(variables('StorageAccountName'), '/default')]"
