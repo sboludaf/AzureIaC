@@ -1,3 +1,11 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
@@ -87,19 +95,31 @@
                     },
                     "resources": [
                         {
-                                // Create Blob Container
-                                "type": "containers",
-                                "apiVersion": "2019-04-01",
-                                "name": "[parameters('BlobStorage1')]",
-                                // Need parent resource dependency
-                                "dependsOn": [
-                                    "[concat(variables('StorageAccountName'), '/default')]"
-                                ],
-                                "properties": {
-                                    // Set te public access
-                                    "publicAccess": "Container"
-                                }
+                            // Create Blob Container
+                            "type": "containers",
+                            "apiVersion": "2019-04-01",
+                            "name": "[parameters('BlobStorage1')]",
+                            // Need parent resource dependency
+                            "dependsOn": [
+                                "[concat(variables('StorageAccountName'), '/default')]"
+                            ],
+                            "properties": {
+                                // Set te public access
+                                "publicAccess": "Container"
+                            }
                         }
+                    ]
+                },
+                {
+                    "type": "fileServices/shares",
+                    "apiVersion": "2019-04-01",
+                    "name": "[concat(variables('StorageAccountName'), '/default/', parameters('FileShare1'))]",
+                    "properties": {
+                        // Size of Fileshare
+                        "shareQuota": "5"
+                    },
+                    "dependsOn": [
+                        "[variables('StorageAccountName')]"
                     ]
                 }
             ]
