@@ -98,7 +98,7 @@
                     "name": "default",
                     // Need parent resource dependency
                     "dependsOn": [
-                        "[variables('StorageAccountName')]"
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
                     ],
                     "properties": {
                         // Add Cors Rules if necessary
@@ -121,7 +121,7 @@
                             "name": "[parameters('BlobStorage1')]",
                             // Need parent resource dependency
                             "dependsOn": [
-                                "[variables('StorageAccountName')]"
+                                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'), '/default')]"
                             ],
                             "properties": {
                                 // Set te public access
