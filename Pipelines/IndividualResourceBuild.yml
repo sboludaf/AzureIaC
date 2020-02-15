@@ -1,0 +1,17 @@
+# --------------------------------------------------------------
+# |                                                            |
+# |    Author: Sergio Boluda Fernandes                         |
+# |    DevSecOps Engineer at BBVA Next Technologies            |
+# |    If you detect any bug contact with sboludaf@gmail.com   |
+# |                                                            |
+# --------------------------------------------------------------
+
+pool:
+  vmImage: ubuntu-16.04
+
+steps:
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'Templates'
+    ArtifactName: 'IndividualResourceArtifact'
+    publishLocation: 'Container'
