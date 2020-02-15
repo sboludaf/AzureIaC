@@ -8,9 +8,6 @@
       "EnvironmentName": {
         "value": "$(EnvironmentName)"
       },
-      "TenantID": {
-        "value": "$(TenantID)"
-      },
       "StorageAccountType": {
         "value": "$(StorageAccountType)"
       },
