@@ -129,6 +129,18 @@
                             }
                         }
                     ]
+                },
+                {
+                    "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+                    "apiVersion": "2019-04-01",
+                    "name": "[concat(variables('StorageAccountName'), '/default/', parameters('FileShare1'))]",
+                    "properties": {
+                        // Size of Fileshare
+                        "shareQuota": "5"
+                    },
+                    "dependsOn": [
+                        "[variables('StorageAccountName')]"
+                    ]
                 }
             ]
         }
