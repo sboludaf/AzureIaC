@@ -1,0 +1,21 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "ProjectName": {
+        "value": "$(ProjectName)"
+      },
+      "EnvironmentName": {
+        "value": "$(EnvironmentName)"
+      },
+      "StorageAccountType": {
+        "value": "$(StorageAccountType)"
+      },
+      "BlobStorage1": {
+        "value": "$(BlobStorage1)"
+      },
+      "FileShare1": {
+          "value": "$(FileShare1)"
+      }
+    }
+}
