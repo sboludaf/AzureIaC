@@ -3,19 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "ProjectName": {
-        "value": "$(ProjectName)"
+        "value": "string"
       },
       "EnvironmentName": {
-        "value": "$(EnvironmentName)"
+        "value": "string"
       },
       "StorageAccountType": {
-        "value": "$(StorageAccountType)"
+        "value": "SelectStorageAccount"
       },
       "BlobStorage1": {
-        "value": "$(BlobStorage1)"
+        "value": "string"
       },
       "FileShare1": {
-          "value": "$(FileShare1)"
+          "value": "string"
       }
     }
 }
