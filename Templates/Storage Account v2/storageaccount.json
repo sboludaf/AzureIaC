@@ -121,7 +121,7 @@
                             "name": "[parameters('BlobStorage1')]",
                             // Need parent resource dependency
                             "dependsOn": [
-                                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'), '/default')]"
+                                "[concat(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), '/default')]"
                             ],
                             "properties": {
                                 // Set te public access
