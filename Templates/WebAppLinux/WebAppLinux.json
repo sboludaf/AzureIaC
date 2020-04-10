@@ -1,0 +1,113 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "ServicePlanSKUName": {
+            "type": "string",
+            "allowedValues": [
+                "F1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1V2",
+                "P2V2",
+                "P3V2"
+            ],
+            "metadata": {
+                "description": "Name of Service Plan SKU"
+            }
+        },
+        "WebAppStack": {
+            "type": "string",
+            "metadata": {
+                "description": "Value of Linux FX Version for declare Stack"
+            }
+        }
+    },
+    "variables": {
+        // Define Name of Azure Service Plan (Server Farm)
+        "ServicePlanName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-asp')]",
+        // Define Name of WebApp Name
+        "WebAppName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-app')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Web/serverfarms",
+            // Stablish an Linux Service plan
+            "kind": "app",
+            "name": "[variables('ServicePlanName')]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "reserved": true
+            },
+            "sku": {
+                "name": "[parameters('ServicePlanSKUName')]"
+            }
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Web/sites",
+            // Stablish an Linux Web App
+            "kind": "app",
+            "name": "[variables('WebAppName')]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "properties": {
+                // Link to Service Plan
+                "serverFarmId": "[variables('ServicePlanName')]",
+                "siteConfig": {
+                // Stablish a Linux FX version, for example a "NODE|10-lts"
+                "linuxFxVersion": "[parameters('WebAppStack')]",
+                // Empty, we will stablish environment variables after
+                "appSettings": []
+                }
+            },
+            "dependsOn": [
+                // This resource need depends of Service Plan
+                "[variables('ServicePlanName')]"
+            ],
+            "resources": [
+                {
+                    "apiVersion": "2018-11-01",
+                    "type": "config",
+                    "name": "appsettings",
+                    "location": "[resourceGroup().id]",
+                    "dependsOn": [
+                        // Depends of Parent Resource
+                        "[variables('WebAppName')]"
+                    ],
+                    "properties": {
+                        // Define the variables
+                        "VARIABLE1": "VALUE OF VARIABLE1",
+                        "VARIABLE2": "VALUE OF VARIABLE2"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
