@@ -7,6 +7,12 @@
       },
       "EnvironmentName": {
         "value": "string"
+      },
+      "ServicePlanSKUName": {
+        "value": "string"
+      },
+      "WebAppStack": {
+        "value": "string"
       }
     }
 }
