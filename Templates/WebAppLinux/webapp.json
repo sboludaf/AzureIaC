@@ -40,8 +40,8 @@
         }
     },
     "variables": {
-        "ServicePlanName": "[concat(parameters('ProjectName'),'-', parameters('EnvironmentName'), 'app')]",
-        "WebAppName": "[concat(parameters('ProjectName'),'-', parameters('EnvironmentName'), 'app')]"
+        "ServicePlanName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-asp')]",
+        "WebAppName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-app')]"
     },
     "resources": [
         {
