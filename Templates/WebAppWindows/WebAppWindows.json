@@ -56,53 +56,27 @@
     "resources": [
         {
             "apiVersion": "2018-02-01",
-            "name": "[variables('ServicePlanName')]",
             "type": "Microsoft.Web/serverfarms",
-            "tags": {
-                "Project": "[parameters('ProjectName')]",
-                "Environment": "[parameters('EnvironmentName')]"
-            },
+            "kind": "app",
+            "name": "[variables('ServicePlanName')]",
             "location": "[resourceGroup().location]",
             "properties": {},
+            "dependsOn": [],
             "sku": {
-                "Name": "[parameters('ServicePlanSKUName')]"
-            },
-            "kind": "app"
+                "name": "[parameters('ServicePlanSKUName')]"
+            }
         },
         {
-            "type": "Microsoft.Web/sites",
-            "name": "[variables('WebAppName')]",
             "apiVersion": "2018-11-01",
-            "location": "[resourceGroup().location]",
-            "tags": {
-                "Project": "[parameters('ProjectName')]",
-                "Environment": "[parameters('EnvironmentName')]"
-            },
+            "type": "Microsoft.Web/sites",
             "kind": "app",
+            "name": "[variables('WebAppName')]",
+            "location": "[resourceGroup().location]",
             "properties": {
-            "serverFarmId": "[variables('ServicePlanName')]",
-            "siteConfig": {
-                "netFrameworkVersion": "v4.0",
-                "phpVersion": "5.6"
-            }
+                "serverFarmId": "[variables('ServicePlanName')]"
             },
-            "resources" : [
-            {
-                "apiVersion": "2018-11-01",
-                "name": "appsettings",
-                "type": "config",
-                "dependsOn": [
-                    "[resourceId('Microsoft.Web/Sites', variables('WebAppName'))]"
-                ],
-                "properties": {
-                        // Define the variables
-                        "VARIABLE1": "VALUE OF VARIABLE1",
-                        "VARIABLE2": "VALUE OF VARIABLE2"
-                }
-            }
-            ],
             "dependsOn": [
-            "[resourceId('Microsoft.Web/serverfarms', variables('WebAppName'))]"
+                "[variables('ServicePlanName')]"
             ]
         }
     ],
