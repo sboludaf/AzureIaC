@@ -1,0 +1,111 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "ServicePlanSKUName": {
+            "type": "string",
+            "allowedValues": [
+                "F1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1V2",
+                "P2V2",
+                "P3V2"
+            ],
+            "metadata": {
+                "description": "Name of Service Plan SKU"
+            }
+        },
+        "WebAppStack": {
+            "type": "string",
+            "metadata": {
+                "description": "Value of Linux FX Version for declare Stack"
+            }
+        }
+    },
+    "variables": {
+        // Define Name of Azure Service Plan (Server Farm)
+        "ServicePlanName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-asp')]",
+        // Define Name of WebApp Name
+        "WebAppName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-app')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "name": "[variables('ServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "properties": {},
+            "sku": {
+                "Name": "[parameters('ServicePlanSKUName')]"
+            },
+            "kind": "app"
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('WebAppName')]",
+            "apiVersion": "2018-11-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "kind": "app",
+            "properties": {
+            "serverFarmId": "[variables('ServicePlanName')]",
+            "siteConfig": {
+                "netFrameworkVersion": "v4.0",
+                "phpVersion": "5.6"
+            }
+            },
+            "resources" : [
+            {
+                "apiVersion": "2018-11-01",
+                "name": "appsettings",
+                "type": "config",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Web/Sites', variables('WebAppName'))]"
+                ],
+                "properties": {
+                        // Define the variables
+                        "VARIABLE1": "VALUE OF VARIABLE1",
+                        "VARIABLE2": "VALUE OF VARIABLE2"
+                }
+            }
+            ],
+            "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', variables('WebAppName'))]"
+            ]
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
