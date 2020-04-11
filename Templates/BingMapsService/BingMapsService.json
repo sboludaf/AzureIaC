@@ -48,6 +48,7 @@
     },
     "resources": [
         {
+            // We recommend first deploy manually the service and accept the Legal terms
             "type": "Microsoft.BingMaps/mapApis",
             "apiVersion": "2016-08-18",
             "name": "[variables('BingMapsName')]",
@@ -55,6 +56,8 @@
             "plan": {
                 "publisher": "bingmaps",
                 "product": "mapapis",
+                // Stablish te SKU of BingMaps
+                // More info in https://azuremarketplace.microsoft.com/en-us/marketplace/apps/bingmaps.mapapis?tab=PlansAndPrice
                 "name": "[parameters('BingMapsSKU')]",
                 "promotionCode": ""
             },
