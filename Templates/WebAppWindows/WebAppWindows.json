@@ -90,8 +90,16 @@
                     "type": "config",
                     "name": "appsettings",
                     "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        // Depends of Parent Resource
+                        "[variables('WebAppName')]"
+                    ],
                     "properties": {
-                        "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('WebAppStack')]"
+                        // Environment variable for stablish a node Version
+                        "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('WebAppStack')]",
+                        // Define another variables
+                        "VARIABLE1": "VALUE OF VARIABLE1",
+                        "VARIABLE2": "VALUE OF VARIABLE2"
                     }
                 }
             ]
