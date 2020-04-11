@@ -57,17 +57,11 @@
         {
             "apiVersion": "2018-02-01",
             "type": "Microsoft.Web/serverfarms",
-            // Stablish an Linux Service plan
             "kind": "app",
             "name": "[variables('ServicePlanName')]",
-            "tags": {
-                "Project": "[parameters('ProjectName')]",
-                "Environment": "[parameters('EnvironmentName')]"
-            },
             "location": "[resourceGroup().location]",
-            "properties": {
-                "reserved": true
-            },
+            "properties": {},
+            "dependsOn": [],
             "sku": {
                 "name": "[parameters('ServicePlanSKUName')]"
             }
@@ -75,26 +69,19 @@
         {
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Web/sites",
-            // Stablish an Linux Web App
             "kind": "app",
             "name": "[variables('WebAppName')]",
-            "tags": {
-                "Project": "[parameters('ProjectName')]",
-                "Environment": "[parameters('EnvironmentName')]"
-            },
             "location": "[resourceGroup().location]",
             "properties": {
-                // Link to Service Plan
                 "serverFarmId": "[variables('ServicePlanName')]",
                 "siteConfig": {
-                // Stablish a Linux FX version, for example a "NODE|10-lts"
-                "linuxFxVersion": "[parameters('WebAppStack')]",
-                // Empty, we will stablish environment variables after
-                "appSettings": []
+                    // Stablis Always On, hold the server on.
+                    "alwaysOn": true,
+                    // By default the Windows WebApp launch a Node Stack, you can change with this parameter and environment variables.
+                    "nodeVersion": "[parameters('WebAppStack')]"
                 }
             },
             "dependsOn": [
-                // This resource need depends of Service Plan
                 "[variables('ServicePlanName')]"
             ],
             "resources": [
@@ -102,13 +89,15 @@
                     "apiVersion": "2018-11-01",
                     "type": "config",
                     "name": "appsettings",
-                    "location": "[resourceGroup().id]",
+                    "location": "[resourceGroup().location]",
                     "dependsOn": [
                         // Depends of Parent Resource
                         "[variables('WebAppName')]"
                     ],
                     "properties": {
-                        // Define the variables
+                        // Environment variable for stablish a node Version
+                        "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('WebAppStack')]",
+                        // Define another variables
                         "VARIABLE1": "VALUE OF VARIABLE1",
                         "VARIABLE2": "VALUE OF VARIABLE2"
                     }
