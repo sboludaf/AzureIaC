@@ -73,10 +73,27 @@
             "name": "[variables('WebAppName')]",
             "location": "[resourceGroup().location]",
             "properties": {
-                "serverFarmId": "[variables('ServicePlanName')]"
+                "serverFarmId": "[variables('ServicePlanName')]",
+                "siteConfig": {
+                    // Stablis Always On, hold the server on.
+                    "alwaysOn": true,
+                    // By default the Windows WebApp launch a Node Stack, you can change with this parameter and environment variables.
+                    "nodeVersion": "[parameters('WebAppStack')]"
+                }
             },
             "dependsOn": [
                 "[variables('ServicePlanName')]"
+            ],
+            "resources": [
+                {
+                    "apiVersion": "2018-11-01",
+                    "type": "config",
+                    "name": "appsettings",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('WebAppStack')]"
+                    }
+                }
             ]
         }
     ],
