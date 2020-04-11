@@ -1,0 +1,69 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "BingMapsSKU": {
+            "type": "string",
+            "allowedValues": [
+                "public1",
+                "public2",
+                "public3",
+                "public4",
+                "public5",
+                "public6",
+                "internal1",
+                "internal2",
+                "internal3",
+                "internal4",
+                "internal5",
+                "internal6"
+            ],
+            "metadata": {
+                "description": "SKU tier of bing maps service"
+            }
+        }
+    },
+    "variables": {
+        "BingMapsName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), 'bing-maps')]"
+    },
+    "resources": [
+        {
+            // We recommend first deploy manually the service and accept the Legal terms
+            "type": "Microsoft.BingMaps/mapApis",
+            "apiVersion": "2016-08-18",
+            "name": "[variables('BingMapsName')]",
+            "location": "westus",
+            "plan": {
+                "publisher": "bingmaps",
+                "product": "mapapis",
+                // Stablish te SKU of BingMaps
+                // More info in https://azuremarketplace.microsoft.com/en-us/marketplace/apps/bingmaps.mapapis?tab=PlansAndPrice
+                "name": "[parameters('BingMapsSKU')]",
+                "promotionCode": ""
+            },
+            "properties": {}
+      }
+    ],
+    "outputs": {},
+    "functions": []
+}
