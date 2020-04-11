@@ -1,0 +1,60 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "DatabricksSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Premium",
+                "Trial"
+            ],
+            "metadata": {
+                "description": "SKU of Databricks"
+            }
+        }
+    },
+    "variables": {
+        "DatabricksName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-databricks')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Databricks/workspaces",
+            "apiVersion": "2018-04-01",
+            "name": "[variables('DataBricksName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "sku": {
+                "name": "[parameters('DatabricksSKU')]"
+            },
+            "properties": {
+                "managedResourceGroupId": "[concat(subscription().id, '/resourceGroups/DATABRICKSRESOURCES-', variables('DatabricksName'))]"
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
