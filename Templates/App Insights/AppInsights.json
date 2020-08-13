@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Company": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of company"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        }
+    },
+    "variables": {
+        // APP Inisghts Name
+        "AppInsightsName": "[toLower(concat(parameters('Company'),   '-', parameters('EnvironmentName'), '-insights'))]"
+    },
+    "resources": [
+        //-- App Insights
+        {
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2018-05-01-preview",
+            "name": "[variables('AppInsightsName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Company": "[parameters('Company')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            // App Insights Kind, by default web
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web"
+            }
+        }
+    ],
+    "outputs": {
+    },
+    "functions": [
+    ]
+}
