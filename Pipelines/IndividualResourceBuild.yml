@@ -9,6 +9,15 @@
 pool:
   vmImage: ubuntu-16.04
 
+trigger:
+  branches:
+    include:
+      - master
+      - feature/
+  paths:
+    include:
+      - Deployment/Template/
+
 steps:
 - task: PublishBuildArtifacts@1
   inputs:
