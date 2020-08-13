@@ -1,0 +1,72 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "ServicePlanSKUName": {
+            "type": "string",
+            "allowedValues": [
+                "F1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1V2",
+                "P2V2",
+                "P3V2"
+            ],
+            "metadata": {
+                "description": "Name of Service Plan SKU"
+            }
+        }
+    },
+    "variables": {
+        // Define Name of Azure Service Plan (Server Farm)
+        "ServicePlanName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-asp')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-06-01",
+            "type": "Microsoft.Web/serverfarms",
+            // Stablish an Linux Service plan
+            "kind": "app",
+            "name": "[variables('ServicePlanName')]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "properties": {
+                // Convert to Linux Service Plan
+                "reserved": true
+            },
+            "sku": {
+                // Get from https://docs.microsoft.com/en-us/rest/api/appservice/appserviceplans/getserverfarmskus
+                "name": "[parameters('ServicePlanSKUName')]"
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
