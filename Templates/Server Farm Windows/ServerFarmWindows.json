@@ -49,7 +49,6 @@
         {
             "apiVersion": "2018-02-01",
             "type": "Microsoft.Web/serverfarms",
-            // Stablish an Linux Service plan
             "kind": "app",
             "name": "[variables('ServicePlanName')]",
             "tags": {
@@ -57,10 +56,7 @@
                 "Environment": "[parameters('EnvironmentName')]"
             },
             "location": "[resourceGroup().location]",
-            "properties": {
-                // Convert to Linux Service Plan
-                "reserved": true
-            },
+            "properties": {},
             "sku": {
                 // Get from https://docs.microsoft.com/en-us/rest/api/appservice/appserviceplans/getserverfarmskus
                 "name": "[parameters('ServicePlanSKUName')]"
