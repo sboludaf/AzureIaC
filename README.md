@@ -60,6 +60,6 @@ Al igual que todo flujo de CI/CD se establecerá una construciccón del artefact
 # Licencia y Contacto
 Todo el código desarrollado en el repositorio es de libre acceso y uso, para más información puede contactar a través de los siguientes métodos.
 
--GMAIL
+[![Linkedin](https://lh3.googleusercontent.com/fqYJHtyzZzA4vacRzeJoB93QNvA5-mvR-8UB5oVLxdYDSTpfLp_KgYD4IqVGJUgFEJo)](https://www.linkedin.com/in/sergio-boluda-fernandes/)
 
-LINKEDIN
+[![Gmail](https://www.eltiempo.com/files/article_main/uploads/2017/12/11/5a2ec3749e645.jpeg)](mailto:sboludaf@gmail.com)
