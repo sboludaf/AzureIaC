@@ -9,7 +9,7 @@ Un flujo ejemplo de despliegue en VSTS sería el siguiente:
 
 
 ### Release-Pipeline
->Se enlaza el artefacto generado con los ficheros storageaccount.json & storageaccount.parameters.json
+>Se enlaza el artefacto generado con los ficheros ServerFarmWindows.json & ServerFarmWindows.parameters.json
 >![Imagen de Pipeline](Images/Release-Pipeline.png)
 
 ### Release-Task
@@ -17,5 +17,5 @@ Un flujo ejemplo de despliegue en VSTS sería el siguiente:
 >![Imagen de Task](Images/Release-Task.png)
 
 ### Release-Variables
->Se sustituyen los parámetros definidos en storageaccount.parameters.json para adaptar el despliegue a nuestro entorno.
+>Se sustituyen los parámetros definidos en ServerFarmWindows.parameters.json para adaptar el despliegue a nuestro entorno.
 >![Imagen de Variables](Images/Release-Variables.png)

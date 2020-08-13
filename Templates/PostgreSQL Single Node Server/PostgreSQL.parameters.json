@@ -1,0 +1,38 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ProjectName": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "EnvironmentName": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "PSQLServerUserAdmin": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "PSQLServerUserPassword": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "PSQLServerSKUName": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "PSQLServerSKUTier": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "PSQLServerStorageMB": {
+      "value": "" // TODO: Fill in parameter value
+    },
+    "PSQLServerVersion": {
+        "value": "" // TODO: Fill in parameter value
+    }
+  }
+}
