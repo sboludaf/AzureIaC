@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "Company": {
+        "ProjectName": {
             "type": "string",
             "metadata": {
                 "description": "Name of company"
@@ -17,7 +17,7 @@
     },
     "variables": {
         // APP Inisghts Name
-        "AppInsightsName": "[toLower(concat(parameters('Company'),   '-', parameters('EnvironmentName'), '-insights'))]"
+        "AppInsightsName": "[toLower(concat(parameters('ProjectName'),   '-', parameters('EnvironmentName'), '-insights'))]"
     },
     "resources": [
         //-- App Insights
