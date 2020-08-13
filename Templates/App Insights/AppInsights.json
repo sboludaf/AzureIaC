@@ -27,7 +27,7 @@
             "name": "[variables('AppInsightsName')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "Company": "[parameters('Company')]",
+                "Company": "[parameters('ProjectName')]",
                 "Environment": "[parameters('EnvironmentName')]"
             },
             // App Insights Kind, by default web
