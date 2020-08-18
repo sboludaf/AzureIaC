@@ -36,7 +36,7 @@
     },
     "variables": {
         // Service Bus Name
-        "ServiceBusName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-sb')]"
+        "ServiceBusName": "[concat(parameters('ProjectName'), parameters('EnvironmentName'), 'sb')]"
     },
     "resources": [
         {
