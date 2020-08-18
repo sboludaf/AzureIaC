@@ -1,0 +1,121 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "ServiceBusSKU": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of this SKU"
+            },
+            "allowedValues": [
+                "Basic",
+                "Standard",
+                "Premium"
+            ]
+        }
+    },
+    "variables": {
+        // Service Bus Name
+        "ServiceBusName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-sb')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[variables('ServiceBusName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "sku": {
+                "name": "[parameters('ServiceBusSKU')]"
+            },
+            "properties": {
+                // Enabling this property creates a Premium Service Bus Namespace in regions supported availability zones.
+                "zoneRedundant": false
+            },
+            "resources": [
+                // Create an authorization rule to get credentials for write into service bus parent resource, you can create an Authorization Rules inside the queue just for write in onle one queue.
+                {
+                    "type": "AuthorizationRules",
+                    "apiVersion": "2017-04-01",
+                    "location": "[resourceGroup().location]",
+                    "name": "RootManageSharedAccessKey",
+                    "properties": {
+                        "rights": [
+                            "Listen",
+                            "Manage",
+                            "Send"
+                        ]
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ServiceBus/namespaces', variables('ServiceBusName'))]"
+                    ]
+                },
+                // Create a Service Bus queue
+                {
+                    "type": "queues",
+                    "apiVersion": "2017-04-01",
+                    // Name Queue
+                    "name": "queue1",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        // ISO 8601 timespan duration of a peek-lock; that is, the amount of time that the message is locked for other receivers. The maximum value for LockDuration is 5 minutes; the default value is 1 minute.
+                        "lockDuration": "PT30S",
+                        // The maximum size of the queue in megabytes, which is the size of memory allocated for the queue. Default is 1024.
+                        "maxSizeInMegabytes": 1024,
+                        // A value indicating if this queue requires duplicate detection.
+                        "requiresDuplicateDetection": false,
+                        // A value that indicates whether the queue supports the concept of sessions.
+                        "requiresSession": false,
+                        // ISO 8601 default message timespan to live value. This is the duration after which the message expires, starting from when the message is sent to Service Bus. This is the default value used when TimeToLive is not set on a message itself.
+                        "defaultMessageTimeToLive": "P14D",
+                        // A value that indicates whether this queue has dead letter support when a message expires.
+                        "deadLetteringOnMessageExpiration": false,
+                        // Value that indicates whether server-side batched operations are enabled.
+                        "enableBatchedOperations": true,
+                        // ISO 8601 timeSpan structure that defines the duration of the duplicate detection history. The default value is 10 minutes.
+                        "duplicateDetectionHistoryTimeWindow": "PT10M",
+                        // The maximum delivery count. A message is automatically deadlettered after this number of deliveries. default value is 10.
+                        "maxDeliveryCount": 1,
+                        // Enumerates the possible values for the status of a messaging entity. - Active, Disabled, Restoring, SendDisabled, ReceiveDisabled, Creating, Deleting, Renaming, Unknown
+                        "status": "Active",
+                        // ISO 8061 timeSpan idle interval after which the queue is automatically deleted. The minimum duration is 5 minutes.
+                        "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                        // A value that indicates whether the queue is to be partitioned across multiple message brokers.
+                        "enablePartitioning": false,
+                        // A value that indicates whether Express Entities are enabled. An express queue holds a message in memory temporarily before writing it to persistent storage.
+                        "enableExpress": false
+                    },
+                    // Dependency required
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ServiceBus/namespaces',variables('ServiceBusName'))]"
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
