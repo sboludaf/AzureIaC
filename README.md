@@ -63,4 +63,4 @@ Todo el c√≥digo desarrollado en el repositorio es de libre acceso y uso, para m√
 [<img src="https://lh3.googleusercontent.com/fqYJHtyzZzA4vacRzeJoB93QNvA5-mvR-8UB5oVLxdYDSTpfLp_KgYD4IqVGJUgFEJo" alt="Linkedin"
 	title="Send Mail" width="100" height="100"/>](https://www.linkedin.com/in/sergio-boluda-fernandes/)
 [<img src="https://www.eltiempo.com/files/article_main/uploads/2017/12/11/5a2ec3749e645.jpeg" alt="Gmail"
-	title="Send Mail" width="160" height="100"/>](mailto:sboludaf@gmail.com)
+	title="Send Mail" width="160" height="100"/>](mailto:sboludaf@outlook.es)
