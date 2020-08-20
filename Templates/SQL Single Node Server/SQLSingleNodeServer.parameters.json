@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "EnvironmentName": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "SQLServerADUser": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "SQLServerADUserOID": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "SQLServerUser": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "SQLServerPassword": {
+            "value": "" // TODO: Fill in parameter value
+        },
+        "SQLServerVersion": {
+            "value": "" // TODO: Fill in parameter value
+        }
+    }
+}
