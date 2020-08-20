@@ -81,7 +81,16 @@
                         "Environment": "[parameters('EnvironmentName')]"
                     },
                     "properties": {
-                        "licenseType": "LicenseIncluded"
+                        "licenseType": "LicenseIncluded",
+                        // Whether or not this database elastic pool is zone redundant, which means the replicas of this database will be spread across multiple availability zones.
+                        "zoneRedundant": false,
+                        // The storage limit for the database elastic pool in bytes.
+                        "maxSizeBytes": 2048
+                    },
+                    "sku": {
+                        // The name of the SKU, typically, a letter + Number code, e.g. P3.
+                        "name": "GP_Gen5"
+                        
                     },
                     "dependsOn": [
                         "[concat('Microsoft.Sql/servers/', variables('SQLServerName'))]"
