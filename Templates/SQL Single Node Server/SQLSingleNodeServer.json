@@ -94,7 +94,7 @@
                     "location": "[resourceGroup().location]",
                     "tags": {
                         "Project": "[parameters('ProjectName')]",
-                        "Environment": "[parameters('EnvironmentName')]",
+                        "Environment": "[parameters('EnvironmentName')]"
                     },
                     "properties": {
                         // The collation of the database. If createMode is not Default, this value is ignored.
