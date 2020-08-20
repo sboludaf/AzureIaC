@@ -1,0 +1,115 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "ACRSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Classic",
+                "Premium",
+                "Standard"
+            ]
+        }
+    },
+    "functions": [],
+    "variables": {
+        "ACRName": "[concat(parameters('ProjectName'), parameters('EnvironmentName'), 'acr')]",
+        "ACIName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), 'aci')]"
+
+    },
+    "resources": [
+        // ACR
+        {
+            "name": "[variables('ACRName')]",
+            "type": "Microsoft.ContainerRegistry/registries",
+            "apiVersion": "2019-05-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "sku": {
+                // The SKU name of the container registry. Required for registry creation.
+                "name": "[parameters('ACRSKU')]"
+            },
+            "properties": {
+                // The value that indicates whether the admin user is enabled.
+                "adminUserEnabled": true
+            }
+        },
+        // ACI
+        {
+            "name": "[variables('ACIName')]",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-10-01",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "properties": {
+                // The containers within the container group.
+                "containers": [{
+                    "name": "[variables('ACIName')]",
+                    "properties": {
+                        // The name of the image used to create the container instance.
+                        "image": "[concat(variables('ACRName'), '.azurecr.io/ImageName:ImageTag')]",
+                        // The resource requirements of the container instance. 
+                        "resources": {
+                            "requests": {
+                                "cpu": 1,
+                                "memoryInGB": 1.5
+                            }
+                        },
+                        // The exposed ports on the container instance. - Array
+                        "ports": [
+                            {
+                                "port": 80,
+                                "protocol": "TCP"
+                            }
+                        ]
+                    }
+                }],
+                // Restart policy for all containers within the container group. - Always Always restart- OnFailure Restart on failure- Never Never restart. - Always, OnFailure, Never
+                "restartPolicy": "OnFailure",
+                // The operating system type required by the containers in the container group. - Windows or Linux
+                "osType": "Linux",
+                // The image registry credentials by which the container group is created from.
+                "imageRegistryCredentials": [{
+                    // The Docker image registry server without a protocol such as "http" and "https".
+                    "server": "[concat(variables('ACRName'), '.azurecr.io')]",
+                    // The username for the private registry.
+                    "username": "[variables('ACRName')]",
+                    // The password for the private registry.
+                    "password": "[listCredentials(resourceId('Microsoft.ContainerRegistry/registries', variables('ACRName')), '2019-05-01').passwords[0].value]"
+                }],
+                "ipAddress": {
+                    "type": "Public",
+                    // The list of ports exposed on the container group.
+                    "ports": [
+                        {
+                            "port": 80,
+                            "protocol": "TCP"
+                        }
+                    ],
+                    // The Dns name label for the IP.
+                    "dnsNameLabel": "[variables('ACIName')]"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
