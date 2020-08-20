@@ -37,7 +37,7 @@
             "name": "[variables('VNETName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-09-01",
-            "location": "string",
+            "location": "[resourceGroup().location]",
             "tags": {
                 "Project": "[parameters('ProjectName')]",
                 "Environment": "[parameters('EnvironmentName')]"
