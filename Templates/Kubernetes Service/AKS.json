@@ -188,7 +188,9 @@
                 }
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/virtualNetworks/', variables('VNETName'))]"
+                "[concat('Microsoft.Network/virtualNetworks/', variables('VNETName'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces', variables('WorkspaceName'))]"
+
             ]
         }
     ],
