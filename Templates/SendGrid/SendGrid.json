@@ -1,0 +1,83 @@
+// --------------------------------------------------------------
+// |                                                            |
+// |    Author: Sergio Boluda Fernandes                         |
+// |    DevSecOps Engineer at BBVA Next Technologies            |
+// |    If you detect any bug contact with sboludaf@gmail.com   |
+// |                                                            |
+// --------------------------------------------------------------
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "SendGridPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "SendGrid Password"
+            }
+        },
+        "SendGridPlan": {
+            "type": "string",
+            "allowedValues": [
+                // 25.000 mails
+                "free",
+                // 40.000 mails
+                "bronze",
+                // 100.000 mails
+                "silver",
+                // 300.000 mails
+                "gold",
+                // 700.000 mails
+                "platinum",
+                // 2.500.000 mails
+                "premier"
+            ],
+            "metadata": {
+                "description": "SendGrid Plan"
+            }
+        }
+    },
+    "variables": {
+        // Define name of SendGrid Account Resource
+        "SendGridName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-sendgrid')]"
+    },
+    "resources": [
+        //-- SendGrid
+        {
+            "type": "Sendgrid.Email/accounts",
+            "name": "[variables('SendGridName')]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-01-01",
+            "plan": {
+                "name": "[parameters('SendGridPlan')]",
+                "publisher": "Sendgrid",
+                "product": "sendgrid_azure",
+                // If you have a promotion code from Twlio Sendgrid
+                "promotionCode": ""
+            },
+            "properties": {
+                "password": "[parameters('SendGridPassword')]",
+                "acceptMarketingEmails": false,
+                "email": ""
+            } 
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
