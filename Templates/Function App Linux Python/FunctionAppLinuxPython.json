@@ -1,0 +1,142 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "StorageAccountType": {
+            "type": "string",
+            "allowedValues": [    
+                "Standard_LRS", 
+                "Standard_GRS", 
+                "Standard_RAGRS", 
+                "Standard_ZRS",
+                "Premium_LRS",
+                "Premium_ZRS",
+                "Standard_GZRS", 
+                "Standard_RAGZRS"
+            ],
+            "metadata": {
+                "description": "Type of storage account"
+            }
+        },
+        "ServicePlanSKUName": {
+            "type": "string",
+            "allowedValues": [
+                "F1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1V2",
+                "P2V2",
+                "P3V2"
+            ],
+            "metadata": {
+                "description": "Name of Service Plan SKU"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "StorageAccountNameFunctionApp": "[concat(parameters('ProjectName'), parameters('EnvironmentName'), 'functions')]",
+        "ServicePlanName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-function-asp')]",
+        "FunctionAppRawName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-function')]"
+    },
+    "resources": [
+        //-- Storage account for FunctionApp
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('StorageAccountNameFunctionApp')]",
+            "apiVersion": "2019-04-01",
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "sku": {
+                "name": "[parameters('StorageAccountType')]"
+            }
+        },
+        //-- App Service plan
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2019-08-01",
+            "name": "[variables('ServicePlanName')]",
+            "location": "[resourceGroup().location]",
+            // Stablish an Linux Service plan
+            "kind": "Linux",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "sku": {
+                "name": "[parameters('ServicePlanSKUName')]"
+            },
+            "properties": {
+                // Convert to Linux Service Plan
+                "reserved": true
+            }
+        },
+        //-- Function App
+        {
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('FunctionAppRawName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('ServicePlanName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountNameFunctionApp'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('ServicePlanName'))]",
+                "siteConfig": {
+                    // true if Always On is enabled; otherwise, false.
+                    "alwaysOn": true
+                },
+                // https://hub.docker.com/_/microsoft-azure-functions-python?tab=description
+                "linuxFxVersion": "DOCKER|mcr.microsoft.com/azure-functions/python:2.0-python3.6-appservice"
+            },
+            // Variables set with resource for group in array objet
+            "resources": [
+                {
+                    "apiVersion": "2018-11-01",
+                    "name": "appsettings",
+                    "type": "config",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/Sites', variables('FunctionAppRawName'))]"
+                    ],
+                    // Can add environment variables for WebApp
+                    "properties": {
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountNameFunctionApp'), ';AccountKey=', listKeys(variables('StorageAccountNameFunctionApp'),'2015-05-01-preview').key1,';EndpointSuffix=core.windows.net')]",
+                        "FUNCTIONS_WORKER_RUNTIME": "python",
+                        "FUNCTIONS_EXTENSION_VERSION": "~2",
+                        "ENABLE_ORYX_BUILD": "true",
+                        "XDG_CACHE_HOME": "/tmp/.cache",
+                        "SCM_DO_BUILD_DURING_DEPLOYMENT": "1",
+                        "BUILD_FLAGS": "UseExpressBuild"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}
