@@ -16,11 +16,11 @@ trigger:
       - feature/
   paths:
     include:
-      - Deployment/Template/
+      - 'Deployment/Templates By Service/'
 
 steps:
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'Templates'
+    PathtoPublish: 'Templates By Service'
     ArtifactName: 'IndividualResourceArtifact'
     publishLocation: 'Container'
