@@ -1,0 +1,196 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "AKSSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Kubernetes Service VM Size"
+            }
+        },
+        "VNETCIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "VNET CIDR"
+            }
+        },
+        "VNETAKSSubnetCIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet1 CIDR"
+            }
+        },
+        "AADClientID": {
+            "type": "string",
+            "metadata": {
+                "description": "Service principal ID"
+            }
+        },
+        "AADSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Service principal secret"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "WorkspaceName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-laws')]",
+        "NSGName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-nsg')]",
+        "VNETName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-vnet')]",
+        "AKSName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-aks')]"
+    },
+    "resources": [
+        //-- Log Analytics
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[variables('WorkspaceName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "properties": {
+                "sku": {
+                    "Name": "PerGB2018"
+                },
+                "features": {
+                    "searchVersion": 1
+                }
+            }
+        },
+        //-- Network Security Group
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-07-01",
+            "name": "[variables('NSGName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "properties": {}
+        },
+        //-- VNET
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-09-01",
+            "name": "[variables('VNETName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('VNETCIDR')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "AKSPrivateSubnet",
+                        "properties": {
+                            "addressPrefix": "[parameters('VNETAKSSubnetCIDR')]"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('NSGName'))]"
+            ]
+        },
+        //-- AKS
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "apiVersion": "2020-04-01",
+            "name": "[variables('AKSName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "properties": {
+                // Version of Kubernetes specified when creating the managed cluster.
+                // Hardcoded because every 6 month Azure expose a new version, the latest 3 versions are considered legacy
+                "kubernetesVersion": "1.15.11",
+                // DNS prefix specified when creating the managed cluster.
+                "dnsPrefix": "[variables('AKSName')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        // Number of agents (VMs) to host docker containers. Allowed values must be in the range of 0 to 100 (inclusive) for user pools and in the range of 1 to 100 (inclusive) for system pools. The default value is 1.
+                        "count": 3,
+                        // Size of agent VMs.
+                        "vmSize": "[parameters('AKSSize')]",
+                        // OS Disk Size in GB to be used to specify the disk size for every machine in this master/agent pool. If you specify 0, it will apply the default osDisk size according to the vmSize specified.
+                        "osDiskSizeGB": 100,
+                        // VNet SubnetID specifies the VNet's subnet identifier.
+                        "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('VNETName'), 'AKSPrivateSubnet')]",
+                        // Maximum number of pods that can run on a node.
+                        "maxPods": 30,
+                        // AgentPoolType represents types of an agent pool. - VirtualMachineScaleSets or AvailabilitySet
+                        "type": "AvailabilitySet",
+                        // Version of orchestrator specified when creating the managed cluster.
+                        // Hardcoded because every 6 month Azure expose a new version, the latest 3 versions are considered legacy
+                        "orchestratorVersion": "1.15.11",
+                        // OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux. - Linux or Windows
+                        "osType": "Linux"
+                    }
+                ],
+                // Information about a service principal identity for the cluster to use for manipulating Azure APIs.
+                "servicePrincipalProfile": {
+                    // The ID for the service principal.
+                    "clientId": "[parameters('AADClientID')]",
+                    // The secret password associated with the service principal in plain text.
+                    "secret": "[parameters('AADSecret')]"
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": false
+                    },
+                    // Write logs in Log Analytics
+                    "omsagent": {
+                        "enabled": true,
+                        "config": {
+                            "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('WorkspaceName'))]"
+                        }
+                    }
+                },
+                // Name of the resource group containing agent pool nodes.
+                "nodeResourceGroup": "[concat('AKS-', parameters('ProjectName'), '-', parameters('EnvironmentName'))]",
+                // Whether to enable Kubernetes Role-Based Access Control.
+                "enableRBAC": true,
+                "networkProfile": {
+                    // Network plugin used for building Kubernetes network. - azure or kubenet
+                    "networkPlugin": "azure",
+                    // The load balancer sku for the managed cluster. - standard or basic
+                    "loadBalancerSku": "Basic",
+                    // A CIDR notation IP range from which to assign service cluster IPs. It must not overlap with any Subnet IP ranges.
+                    "serviceCidr": "100.100.0.0/16",
+                    // An IP address assigned to the Kubernetes DNS service. It must be within the Kubernetes service address range specified in serviceCidr.
+                    "dnsServiceIP": "100.100.0.10",
+                    // A CIDR notation IP range assigned to the Docker bridge network. It must not overlap with any Subnet IP ranges or the Kubernetes service address range.
+                    "dockerBridgeCidr": "172.17.0.1/16"
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('VNETName'))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}
