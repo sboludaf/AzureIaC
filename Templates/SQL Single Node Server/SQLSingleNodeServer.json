@@ -131,9 +131,13 @@
                     "apiVersion": "2014-04-01",
                     "name": "ActiveDirectory",
                     "properties": {
+                        // The type of administrator. - ActiveDirectory
                         "administratorType": "ActiveDirectory",
+                        // The server administrator login value.
                         "login": "[parameters('SQLServerADUser')]",
+                        // The server administrator Sid (Secure ID). - globally unique identifier
                         "sid": "[parameters('SQLServerADUserOID')]",
+                        // The server Active Directory Administrator tenant id. - globally unique identifier
                         "tenantId": "[subscription().tenantId]"
                     },
                     "dependsOn": [
