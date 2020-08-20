@@ -59,27 +59,6 @@
                         }
                     }
                 ],
-                "virtualNetworkPeerings": [
-                    {
-                        "id": "string",
-                        "properties": {
-                            "allowVirtualNetworkAccess": "boolean",
-                            "allowForwardedTraffic": "boolean",
-                            "allowGatewayTransit": "boolean",
-                            "useRemoteGateways": "boolean",
-                            "remoteVirtualNetwork": {
-                                "id": "string"
-                            },
-                            "remoteAddressSpace": {
-                                "addressPrefixes": [
-                                    "string"
-                                ]
-                            },
-                            "peeringState": "string"
-                        },
-                        "name": "string"
-                    }
-                ],
                 // Indicates if DDoS protection is enabled for all the protected resources in the virtual network. It requires a DDoS protection plan associated with the resource.
                 "enableDdosProtection": false,
                 // Indicates if VM protection is enabled for all the subnets in the virtual network.
