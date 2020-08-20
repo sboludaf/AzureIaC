@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "VNETCIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "VNET CIDR"
+            }
+        },
+        "Subnet1CIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet1 CIDR"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "VNETName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-vnet')]",
+        "SubnetName": "[concat(parameters('ProjectName'), '-', parameters('EnvironmentName'), '-subnet')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('VNETName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-09-01",
+            "location": "string",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "properties": {
+                // The AddressSpace that contains an array of IP address ranges that can be used by subnets.
+                "addressSpace": {
+                    // A list of address blocks reserved for this virtual network in CIDR notation.
+                    "addressPrefixes": [
+                        "[parameters('VNETCIDR')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('SubnetName')]",
+                        "properties": {
+                            // The address prefix for the subnet.
+                            "addressPrefix": "[parameters('Subnet1CIDR')]"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [
+                    {
+                        "id": "string",
+                        "properties": {
+                            "allowVirtualNetworkAccess": "boolean",
+                            "allowForwardedTraffic": "boolean",
+                            "allowGatewayTransit": "boolean",
+                            "useRemoteGateways": "boolean",
+                            "remoteVirtualNetwork": {
+                                "id": "string"
+                            },
+                            "remoteAddressSpace": {
+                                "addressPrefixes": [
+                                    "string"
+                                ]
+                            },
+                            "peeringState": "string"
+                        },
+                        "name": "string"
+                    }
+                ],
+                // Indicates if DDoS protection is enabled for all the protected resources in the virtual network. It requires a DDoS protection plan associated with the resource.
+                "enableDdosProtection": false,
+                // Indicates if VM protection is enabled for all the subnets in the virtual network.
+                "enableVmProtection": false
+            },
+            "resources": []
+        }
+    ],
+    "outputs": {}
+}
