@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ProjectName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of project"
+            }
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of environment for deploy"
+            }
+        },
+        "ACRSKU": {
+            "type": "string",
+            "allowedValues": [
+                "Basic",
+                "Classic",
+                "Premium",
+                "Standard"
+            ]
+        }
+    },
+    "functions": [],
+    "variables": {
+        "ACRName": "[concat(parameters('ProjectName'), parameters('EnvironmentName'), 'acr')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('ACRName')]",
+            "type": "Microsoft.ContainerRegistry/registries",
+            "apiVersion": "2019-05-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "Project": "[parameters('ProjectName')]",
+                "Environment": "[parameters('EnvironmentName')]"
+            },
+            "sku": {
+                // The SKU name of the container registry. Required for registry creation.
+                "name": "[parameters('ACRSKU')]"
+            },
+            "properties": {
+                // The value that indicates whether the admin user is enabled.
+                "adminUserEnabled": true
+            }
+        }
+    ],
+    "outputs": {}
+}
